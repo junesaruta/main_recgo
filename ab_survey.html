@@ -382,7 +382,7 @@
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
   const member_code = currentUser?.member_code ? String(currentUser.member_code) : "";
   if(!member_code){
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   }
 
   const session_id = crypto?.randomUUID ? crypto.randomUUID() : String(Date.now());

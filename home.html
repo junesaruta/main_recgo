@@ -356,14 +356,14 @@
     try {
       user = JSON.parse(localStorage.getItem("currentUser") || "{}");
       if (!user?.member_code && !user?.display_name) {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
         return;
       }
       document.getElementById("userId").textContent = `User id : ${user.member_code ?? "-"}`;
       document.getElementById("userName").textContent = `${user.display_name ?? "—"}`;
     } catch (e) {
       console.error("[home] read currentUser failed:", e);
-      window.location.href = "login.html";
+      window.location.href = "index.html";
       return;
     }
 
@@ -442,7 +442,7 @@
     document.getElementById("btnLogout").addEventListener("click", () => {
       localStorage.removeItem("loginData");
       sessionStorage.removeItem("password_raw");
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     });
 
     // document.getElementById("btnFeedback").addEventListener("click", () => {
@@ -457,7 +457,7 @@
 
       if (!member_code) {
         alert("ไม่พบผู้ใช้งาน กรุณา login ใหม่");
-        window.location.href = "login.html";
+        window.location.href = "index.html";
         return;
       }
 
