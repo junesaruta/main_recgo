@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RecGo — Item</title>
+  <!-- ฟอนต์เดิม -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto:wght@400;500;700&family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- สไตล์ของหน้านี้ -->
+  <link rel="stylesheet" href="css/items.css">
+</head>
+<body>
+  <main class="items-stage">
+    <!-- พาเนลชมพูอ่อน -->
+    <div class="items-panel"></div>
+
+    <!-- รูปสินค้า -->
+    <img id="itemImg" class="item-img" src="https://placehold.co/160x160" alt="item image">
+
+    <!-- ปุ่ม: ADD TO FAVORITE -->
+    <button id="btnFav" class="btn btn-mint" type="button">
+      ADD TO FAVORITE
+    </button>
+
+    <!-- ปุ่ม: Back -->
+    <button id="btnBack" class="btn btn-outline" type="button">
+      Back
+    </button>
+
+    <!-- Product Id -->
+    <div id="productId" class="product-id">Product Id : —</div>
+
+    <!-- Price -->
+    <div class="price-label">Price</div>
+    <div id="price" class="price-value">—</div>
+
+    <!-- ชื่อสินค้า -->
+    <div class="title-wrap">
+      <div id="itemName" class="item-title">—</div>
+    </div>
+  </main>
+
+  <script src="js/items.js"></script>
+</body>
+</html>

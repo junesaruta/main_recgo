@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RecGo — Home</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700&family=Roboto:wght@400;500;700&family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/home.css">
+  <style>
+    .icon-link{display:inline-flex;align-items:center;cursor:pointer;}
+    .sku small{display:block;color:#6b7280;font-weight:500;margin-top:2px;}
+
+    /*  thumb เป็น <img> + object-fit */
+    .thumb{
+      width:160px;
+      height:160px;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      object-fit:cover;
+      display:block;
+    }
+  </style>
+</head>
+
+<body>
+<main class="page" id="app">
+  <header class="hero">
+    <img src="assets/flower_white.svg" class="flower f1" alt="">
+    <img src="assets/flower_white.svg" class="flower f2" alt="">
+    <div class="logo-wrap">
+      <img src="assets/group.svg" alt="RecGo" class="logo">
+    </div>
+  </header>
+
+  <div class="user-strip">
+    <div>
+      <div class="user-id" id="userId">User id : —</div>
+      <div class="user-name" id="userName">คุณ —</div>
+    </div>
+    <a href="fav.html" class="muted icon-link" aria-label="ไปหน้ารายการโปรด">
+      <img src="assets/favorite.svg" alt="Favorites" width="30" height="30" />
+    </a>
+  </div>
+
+  <!-- For You -->
+  <section class="section">
+    <h1 id="forYouHeader" style="text-align:center;">สินค้าสำหรับคุณ</h1>
+    <div style="display:flex;justify-content:center;gap:10px;margin:10px 0 6px;">
+      <button id="btnRecoA" class="btn" type="button" style="min-width:120px;">choice : A</button>
+      <button id="btnRecoB" class="btn mint" type="button" style="min-width:120px;">choice : B</button>
+    </div>
+    <div style="text-align:center;color:#6b7280;font-size:12px;margin-bottom:8px;">
+      ตอนนี้กำลังดู: <b id="recoVariantLabel">B</b>
+    </div>
+
+    <div class="grid" id="forYouGrid"></div>
+  </section>
+
+  <!-- Recent -->
+  <section class="section pink-bg">
+    <h1 id="recentHeader" style="text-align:center;">สินค้าที่ซื้อล่าสุด</h1>
+    <div class="slider">
+      <div class="track" id="recentTrack"></div>
+    </div>
+  </section>
+
+  <!-- New -->
+  <section style="background: rgba(248,123,156,0.57);">
+    <div class="section pink-soft">
+      <h1 id="newHeader" style="text-align:center;">สินค้ามาใหม่</h1>
+      <div class="slider">
+        <div class="track" id="newTrack"></div>
+      </div>
+      <div class="footer-actions">
+        <button class="btn mint" id="btnLogout">Log Out</button>
+        <button class="btn" id="btnFeedback">Give feedback</button>
+      </div>
+    </div>
+  </section>
+
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+  import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./js/config.js";
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ===== Utils =====
+  const PLACEHOLDER_IMG = "https://placehold.co/160x160?text=No+Image";
+
+  function escapeHtml(s) {
+    return String(s ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  //normalize: item_id, name, img, price, score, updated_at
+  function normalizeItem(p) {
+    const item_id =
+      p?.item_id != null ? Number(p.item_id)
+      : (p?.id != null ? Number(p.id) : null);
+
+    const name =
+      typeof p?.name === "string"
+        ? p.name
+        : (typeof p?.item_name === "string" ? p.item_name : "—");
+
+    const img =
+      typeof p?.img === "string"
+        ? p.img
+        : (typeof p?.image_url === "string"
+            ? p.image_url
+            : (typeof p?.image === "string"
+                ? p.image
+                : PLACEHOLDER_IMG));
+
+    const price =
+      p?.price != null ? Number(p.price)
+      : (p?.item_price != null ? Number(p.item_price) : null);
+
+    return {
+      item_id,
+      name: String(name).trim() || "—",
+      img: String(img).trim() || PLACEHOLDER_IMG,
+      price,
+      score: p?.score != null ? Number(p.score) : null,
+      updated_at: p?.updated_at ? String(p.updated_at) : null,
+    };
+  }
+
+  function saveSelectedItem(payload) {
+    try {
+      localStorage.setItem("selectedItem", JSON.stringify(payload));
+      window.location.href = "items.html";
+    } catch (err) {
+      console.warn("[home] cannot save selectedItem:", err);
+    }
+  }
+
+  //assets/{item_id}.jpg ก่อน → fallback p.img → placeholder
+  function buildThumbImg(p) {
+    const localSrc =
+      (p.item_id != null && !Number.isNaN(p.item_id))
+        ? `assets/${p.item_id}.jpg`
+        : "";
+
+    const fallback1 = p.img || PLACEHOLDER_IMG;
+    const fallback2 = PLACEHOLDER_IMG;
+
+    return `
+      <img class="thumb"
+           src="${escapeHtml(localSrc || fallback1)}"
+           alt="${escapeHtml(p.name)}"
+           data-fallback="${escapeHtml(fallback1)}"
+           data-placeholder="${escapeHtml(fallback2)}"
+           onerror="
+             if (this.dataset.stage !== '1') {
+               this.dataset.stage='1';
+               this.src=this.dataset.fallback;
+             } else {
+               this.src=this.dataset.placeholder;
+             }
+           " />
+    `;
+  }
+
+  function attachCardClick(containerId, sourceLabel) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.addEventListener("click", (ev) => {
+      const card = ev.target.closest(".card.item");
+      if (!card || !container.contains(card)) return;
+
+      const name =
+        card.dataset.name ||
+        card.querySelector(".sku")?.textContent?.trim() ||
+        "";
+
+      const item_id = card.dataset.itemId ? Number(card.dataset.itemId) : null;
+
+      const price =
+        (card.dataset.price !== undefined && card.dataset.price !== "")
+          ? Number(card.dataset.price)
+          : null;
+
+      const img =
+        card.dataset.finalImg ||
+        card.dataset.img ||
+        PLACEHOLDER_IMG;
+
+      const src = (typeof sourceLabel === "function") ? sourceLabel() : sourceLabel;
+
+      try{
+        const logs = JSON.parse(localStorage.getItem("ab_reco_logs") || "[]");
+        const cu = JSON.parse(localStorage.getItem("currentUser")||"{}");
+        logs.push({
+          type: "click_item",
+          variant: localStorage.getItem("reco_variant") || "A",
+          member_code: cu?.member_code ?? null,
+          item_id,
+          ts: new Date().toISOString()
+        });
+        localStorage.setItem("ab_reco_logs", JSON.stringify(logs));
+      }catch(e){}
+
+      saveSelectedItem({
+        item_id,
+        name,
+        img,
+        price,
+        source: src,
+        clickedAt: new Date().toISOString(),
+      });
+    });
+  }
+
+  //Grid: ใช้ buildThumbImg + data-final-img + data-price + โชว์ราคา
+  function renderGridWithRank(el, list) {
+    if (!el) return;
+
+    if (!Array.isArray(list) || list.length === 0) {
+      el.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#6b7280;padding:12px;">No data</div>`;
+      return;
+    }
+
+    el.innerHTML = list.map((raw, i) => {
+      const p = normalizeItem(raw);
+
+      const local = (p.item_id != null && !Number.isNaN(p.item_id))
+        ? `assets/${p.item_id}.jpg`
+        : "";
+
+      const finalImgGuess = local || p.img || PLACEHOLDER_IMG;
+
+      return `
+        <div class="product-wrap">
+          <div class="product-index">${i + 1}</div>
+
+          <div class="card item"
+               data-item-id="${p.item_id ?? ""}"
+               data-name="${escapeHtml(p.name)}"
+               data-img="${escapeHtml(p.img)}"
+               data-final-img="${escapeHtml(finalImgGuess)}"
+               data-price="${p.price ?? ""}">
+
+            ${buildThumbImg(p)}
+
+            <div class="sku">${escapeHtml(p.name)}</div>
+            <div class="sku" style="font-size:12px;color:#6b7280;">ID: ${p.item_id ?? "-"}</div>
+            <div class="sku" style="font-size:12px;color:#6b7280;">฿ ${p.price ?? "-"}</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  //Track: ใช้ buildThumbImg + data-final-img + data-price + โชว์ราคา
+  function renderTrack(el, list) {
+    if (!el) return;
+
+    if (!Array.isArray(list) || list.length === 0) {
+      el.innerHTML = `
+        <div class="card item" style="text-align:center;"
+             data-name="—"
+             data-img="${PLACEHOLDER_IMG}"
+             data-final-img="${PLACEHOLDER_IMG}"
+             data-price="">
+          <img class="thumb" src="${PLACEHOLDER_IMG}" alt="No data" />
+          <div class="sku" style="margin-top:8px;">No data</div>
+        </div>`;
+      return;
+    }
+
+    el.innerHTML = list.map((raw) => {
+      const p = normalizeItem(raw);
+
+      const local = (p.item_id != null && !Number.isNaN(p.item_id))
+        ? `assets/${p.item_id}.jpg`
+        : "";
+
+      const finalImgGuess = local || p.img || PLACEHOLDER_IMG;
+
+      return `
+        <div class="card item" style="text-align:center;"
+             data-item-id="${p.item_id ?? ""}"
+             data-name="${escapeHtml(p.name)}"
+             data-img="${escapeHtml(p.img)}"
+             data-final-img="${escapeHtml(finalImgGuess)}"
+             data-price="${p.price ?? ""}">
+
+          ${buildThumbImg(p)}
+
+          <div class="sku" style="margin-top:8px;">${escapeHtml(p.name)}</div>
+          <div class="sku" style="font-size:12px;color:#6b7280;">ID: ${p.item_id ?? "-"}</div>
+          <div class="sku" style="font-size:12px;color:#6b7280;">฿ ${p.price ?? "-"}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  // ===== RPC fetchers (DB only) =====
+  // ✅ A = v4
+  async function fetchForYouV4(member_code) {
+    const { data, error } = await supabase.rpc("for_you_items_v4", {
+      p_member_code: member_code
+    });
+    if (error) {
+      console.error("[for_you_items_v4] error:", error);
+      return [];
+    }
+    return data || [];
+  }
+
+  // ✅ B = v5
+  async function fetchForYouV5(member_code) {
+    const { data, error } = await supabase.rpc("for_you_items_v5", {
+      p_member_code: member_code
+    });
+    if (error) {
+      console.error("[for_you_items_v5] error:", error);
+      return [];
+    }
+    return data || [];
+  }
+
+  async function fetchRecentNoDup(member_code, limit = 12) {
+    const { data, error } = await supabase.rpc("buy_recent_items_nodup", {
+      p_member_code: String(member_code),
+      p_limit: limit,
+    });
+    if (error) {
+      console.error("[buy_recent_items_nodup] error:", error);
+      return [];
+    }
+    return data || [];
+  }
+
+  async function fetchNew(limit = 12) {
+    const { data, error } = await supabase.rpc("new_items_v2", { p_limit: limit });
+    if (error) {
+      console.error("[new_items_v2] error:", error);
+      return [];
+    }
+    return data || [];
+  }
+
+  // ===== Main =====
+  document.addEventListener("DOMContentLoaded", async () => {
+    // ---- Login ----
+    let user = {};
+    try {
+      user = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      if (!user?.member_code && !user?.display_name) {
+        window.location.href = "login.html";
+        return;
+      }
+      document.getElementById("userId").textContent = `User id : ${user.member_code ?? "-"}`;
+      document.getElementById("userName").textContent = `${user.display_name ?? "—"}`;
+    } catch (e) {
+      console.error("[home] read currentUser failed:", e);
+      window.location.href = "login.html";
+      return;
+    }
+
+    // ---- Fetch ALL from DB (preload A+B) ----
+    const [forYouA, forYouB, recent, newItems] = await Promise.all([
+      fetchForYouV4(user.member_code),   // A
+      fetchForYouV5(user.member_code),   // B
+      fetchRecentNoDup(user.member_code, 12),
+      fetchNew(12),
+    ]);
+
+    // ---- A/B Switch logic ----
+    const forYouGridEl = document.getElementById("forYouGrid");
+    const recoVariantLabel = document.getElementById("recoVariantLabel");
+    const btnRecoA = document.getElementById("btnRecoA");
+    const btnRecoB = document.getElementById("btnRecoB");
+
+    // default: ใช้ค่าเก่า ถ้าไม่มีเริ่มที่ B
+    let recoVariant = localStorage.getItem("reco_variant") || "A";
+
+    function setRecoVariant(v){
+      recoVariant = v;
+      localStorage.setItem("reco_variant", v);
+
+      // UI label
+      recoVariantLabel.textContent = v;
+
+      // active style (สลับปุ่ม)
+      if(v === "A"){
+        btnRecoA.classList.add("mint");
+        btnRecoB.classList.remove("mint");
+      }else{
+        btnRecoB.classList.add("mint");
+        btnRecoA.classList.remove("mint");
+      }
+
+      // render
+      const list = (v === "A") ? forYouA : forYouB;
+      renderGridWithRank(forYouGridEl, list);
+
+      // log impression
+      try{
+        const logs = JSON.parse(localStorage.getItem("ab_reco_logs") || "[]");
+        logs.push({
+          type: "view_variant",
+          variant: v,
+          member_code: user.member_code ?? null,
+          ts: new Date().toISOString()
+        });
+        localStorage.setItem("ab_reco_logs", JSON.stringify(logs));
+      }catch(e){}
+    }
+
+    btnRecoA.addEventListener("click", ()=> setRecoVariant("A"));
+    btnRecoB.addEventListener("click", ()=> setRecoVariant("B"));
+
+    // initial render
+    setRecoVariant(recoVariant);
+
+    // ---- Render Recent/New ----
+    renderTrack(document.getElementById("recentTrack"), recent);
+    document.getElementById("recentHeader").textContent =
+      `สินค้าที่ซื้อล่าสุด (${recent?.length || 0} รายการ)`;
+
+    renderTrack(document.getElementById("newTrack"), newItems);
+    document.getElementById("newHeader").textContent =
+      `สินค้ามาใหม่ (${newItems?.length || 0} รายการ)`;
+
+    // ---- Click handlers ----
+    //  for you: source = forYou_A / forYou_B
+    attachCardClick("forYouGrid", () => `forYou_${localStorage.getItem("reco_variant") || "A"}`);
+    attachCardClick("recentTrack", "recent");
+    attachCardClick("newTrack", "new");
+
+    // ---- Buttons ----
+    document.getElementById("btnLogout").addEventListener("click", () => {
+      localStorage.removeItem("loginData");
+      sessionStorage.removeItem("password_raw");
+      window.location.href = "login.html";
+    });
+
+    // document.getElementById("btnFeedback").addEventListener("click", () => {
+    //   alert("ขอบคุณสำหรับคำติชม! (เดโม)");
+    // });
+    document.getElementById("btnFeedback").addEventListener("click", () => {
+
+      // ดึง user จาก localStorage (แบบที่คุณใช้ทั้งโปรเจกต์)
+      const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+
+      const member_code = currentUser?.member_code;
+
+      if (!member_code) {
+        alert("ไม่พบผู้ใช้งาน กรุณา login ใหม่");
+        window.location.href = "login.html";
+        return;
+      }
+
+      // ไปหน้า A/B survey พร้อมส่ง member_code
+      window.location.href = `ab_survey.html?member_code=${encodeURIComponent(member_code)}`;
+    });
+  });
+</script>
+
+</main>
+</body>
+</html>

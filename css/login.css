@@ -1,0 +1,162 @@
+:root{
+  --pink:#F87B9C;
+  --mint:#5ECCB2;
+  --mint-dark:#3AA79A;
+  --border:#D9D9D9;
+  --text:#1E1E1E;
+  --muted:#B3B3B3;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:105%; }
+
+body{
+  margin:0;
+ font-family: "Noto Sans Thai", system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: linear-gradient(180deg, #fff 0%, var(--pink) 105%);
+  display:flex; align-items:center; justify-content:center;
+}
+
+.center-logo {
+  position: absolute;        /* หรือใช้ flex ก็ได้ */
+  bottom: 65%;
+  text-align: center;
+}
+
+.center-logo img {
+  width: 400 px;   /* ปรับขนาดรูป */
+  height: auto;
+}
+
+/* ===== Card ===== */
+.login-card{
+  width: 340px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.12);
+  display:flex; flex-direction:column; gap: 18px;
+}
+.login-title{
+  margin:0 0 2px;
+  text-align:center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* ===== Inputs with icons ===== */
+.form-group{ display:flex; flex-direction:column; gap: 6px; }
+.form-group label{ color:var(--text); font-size:15px; }
+
+.input-with-icon{
+  display:flex; align-items:center;
+  border:1px solid var(--border);
+  border-radius: 8px;
+  background:#fff;
+  padding: 10px 12px;
+}
+.input-with-icon i{ color:var(--muted); margin-right:8px; font-size:14px; }
+.input-with-icon input{
+  border:none; outline:none; flex:1; font-size:15px;
+}
+.input-with-icon input::placeholder{ color:var(--muted); }
+
+/* ===== Buttons ===== */
+.btn-mint{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  background: var(--mint);
+  color:#fff;
+  border:0; border-radius: 100px;
+  padding: 12px;
+  font-weight: 700; font-size: 15px;
+  cursor:pointer;
+  transition: background .2s, transform .08s;
+}
+.btn-mint:hover{ background: var(--mint-dark); transform: translateY(-1px); }
+
+.btn-ghost{
+  border:1.5px solid var(--mint);
+  color: var(--mint);
+  background:#fff;
+  width: 15%;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-weight: 700; font-size: 13px;
+  cursor:pointer;
+}
+
+/* ===== Floating outline button (bottom-right) ===== */
+.outline-box{
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 48px; height: 48px;
+  outline: 4px rgba(255,255,255,.56) solid;
+  outline-offset: -2px;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,.15);
+}
+.fab-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background:none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  /* box-shadow: 0 4px 12px rgba(0,0,0,0.2); */
+  transition: background .2s, transform .1s;
+}
+.fab-btn:hover {
+  /* background: var(--mint-dark); */
+  box-shadow: 0 0px 0px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+.fab-btn i {
+  font-size: 24px;
+  color: #fff;
+  pointer-events: none;
+}
+.fab-btn img {
+  width: 25px;  /* ขนาด icon */
+  height: 25px;
+  object-fit: contain;
+  pointer-events: none; /* ป้องกันไม่ให้คลิกโดนรูปแทนปุ่ม */
+}
+
+
+/* ===== Modal ===== */
+.modal{ position: fixed; inset:0; display:none; }
+.modal.open{ display:block; }
+
+.modal-backdrop{
+  position:absolute; inset:0; background: rgba(0,0,0,.35);
+  backdrop-filter: blur(2px);
+}
+.modal-card{
+  position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
+  width: min(480px, 92vw);
+  background:#fff; border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.25);
+  overflow:hidden;
+}
+.modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, #FFD5E6, #FFE9F1);
+}
+.modal-head h3{ margin:0; font-size:16px; font-weight:800; color:#2e2e2e; display:flex; gap:8px; align-items:center; }
+.modal-close{
+  background:transparent; border:0; font-size:18px; color:#7a7a7a; cursor:pointer;
+}
+.modal-body{ padding: 14px 16px; color:#333; }
+.modal-foot{ padding: 10px 16px 16px; display:flex; justify-content:flex-end; gap:8px; }

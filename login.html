@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RecGo — Login</title>
+
+  <!-- CSS หลัก -->
+  <link href="css/login.css" rel="stylesheet" />
+  <link href="css/splash.css" rel="stylesheet" />   
+
+  <!-- Icon + Font -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700&family=Roboto:wght@400;500;700&family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+ <div id="splash">
+  <!-- ดอกไม้ซ้าย/ขวา -->
+  <img src="assets/flower_white.svg" class="flower f1" alt="">
+  <img src="assets/flower_white.svg" class="flower f2" alt="">
+
+  <!-- โลโก้หลักตรงกลาง -->
+  <div class="splash-content">
+    <img src="assets/group.svg" alt="โลโก้หลัก" class="logo" />
+  </div>
+
+  <!-- หมายเหตุองค์กร -->
+  <div class="splash-note"> <h1 >Products Recommendation System for</h1>
+    <img src="assets/logo.svg" alt="โลโก้ CO-OP" class="coop-note">
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+  <!-- หน้า Login -->
+    <div class="center-logo">
+    <img src="assets/group.svg" alt="หัวเว็ป" />
+    </div>
+  <div class="login-wrapper">
+    <div class="login-card">
+        <div class="form-group">
+          <label for="memberId">เลขสมาชิกของคุณ</label>
+          <div class="input-with-icon">
+            <i class="fa fa-user"></i>
+            <input type="text" id="memberId" placeholder="กรอกเลขสมาชิก" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">รหัสผ่าน</label>
+          <div class="input-with-icon">
+            <i class="fa fa-lock"></i>
+            <input type="password" id="password" placeholder="กรอกรหัสผ่าน" />
+          </div>
+        </div>
+        <button class="btn-mint" id="btnSignIn">
+          <i class="fa fa-right-to-bracket"></i> Sign in
+        </button>
+      </div>
+    </div>
+  </div>
+  </div>
+    <!-- ปุ่ม FAB ใช้รูปจากไฟล์ -->
+    <button class="fab-btn" id="fabInfo" aria-label="ข้อมูลเพิ่มเติม">
+    <img src="assets/info.svg" alt="ข้อมูล" />
+    </button>
+
+  <!-- โมดัลข้อมูล -->
+  <div class="modal" id="infoModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal-backdrop" data-close="1"></div>
+    <div class="modal-card" role="document">
+      <div class="modal-head">
+        <h3 id="modalTitle"><i class="fa fa-circle-info"></i> รายละเอียดการลงทะเบียน</h3>
+        <button class="modal-close" data-close="1" aria-label="ปิด">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+        เว็บแอปพลิเคชัน <strong>RecGo</strong> นี้เป็นส่วนหนึ่งของโครงงานเพื่อการศึกษาตามหลักสูตร
+        <strong>วิทยาศาสตรบัณฑิต สาขาวิชาวิทยาการคอมพิวเตอร์</strong>
+        ภาควิชาคณิตศาสตร์และวิทยาการคอมพิวเตอร์
+        คณะวิทยาศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย ของ
+        <br><strong>นางสาวศรุตาพร รัตนวงศาโรจน์ เลขประจำตัวนิสิต 6534463828</strong>
+        เพื่อสมาชิกของร้านสหกรณ์จุฬาลงกรณ์มหาวิทยาลัย จำกัด เท่านั้น
+        </p>
+        </p>
+        <ul>
+          <li>ท่านจะต้องเป็นสมาชิกที่ได้ลงทะเบียนไว้</li>
+          <li>หากยังไม่ได้ทําการลงทะเบียนท่านจะไม่สามารถใช้งานได้</li>
+          <li>กรุณาติดต่อเจ้าหน้าที่เพื่อขอรับการลงทะเบียน</li>
+        </ul>
+        <p><strong>ติดต่อ :</strong> ร้านสหกรณ์จุฬาลงกรณ์มหาวิทยาลัย จำกัด 
+            ในจุฬาลงกรณ์มหาวิทยาลัย ศาลาพระเกี้ยว
+            ถนนพญาไท แขวงวังใหม่ เขตปทุมวัน
+            กรุงเทพมหานคร 10330</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-ghost" data-close="1">ปิด</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+ <script src="js/splash.js"></script> 
+  <!-- <script src="js/login.js"></script> -->
+ <script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+  import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./js/config.js";
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // === helpers ===
+  const toEmail = (v) => {
+    const s = (v || "").trim();
+    return s.includes("@") ? s.toLowerCase() : `${s}@example.com`.toLowerCase();
+  };
+
+  const setBusy = (el, on) => {
+    if (!el) return;
+    el.disabled = !!on;
+    el.dataset.busy = on ? "1" : "0";
+  };
+
+  const getErrText = (err) => {
+    const m = String(err?.message || err?.name || err || "");
+    if (/invalid login/i.test(m) || /invalid credentials/i.test(m))
+      return "อีเมล/เลขสมาชิก หรือรหัสผ่านไม่ถูกต้อง";
+    if (/network|fetch|failed to fetch|timeout/i.test(m))
+      return "เครือข่ายมีปัญหา กรุณาลองใหม่อีกครั้ง";
+    if (/permission|policy|rls|401|403/i.test(m))
+      return "สิทธิ์ไม่เพียงพอ (RLS/Policy) ติดต่อผู้ดูแลระบบ";
+    return m || "เกิดข้อผิดพลาด";
+  };
+
+  // ===== เพิ่มใหม่: เติม 55 เฉพาะ 0001-0030 =====
+  function isDemoMember0001to0030(memberCode) {
+    const mc = String(memberCode ?? "").trim();
+    if (!/^\d{4}$/.test(mc)) return false;
+    const n = Number(mc);
+    return n >= 1 && n <= 30;
+  }
+
+  function normalizePasswordForCheck(memberCode, rawPass) {
+    const p = String(rawPass ?? "").trim();
+    // เฉพาะ 0001-0030 และกรอก 4 หลัก → เติม 55 เป็น 6 หลัก
+    if (isDemoMember0001to0030(memberCode) && /^\d{4}$/.test(p)) {
+      return "55" + p;
+    }
+    return p;
+  }
+
+  // ===== main =====
+  document.addEventListener("DOMContentLoaded", async () => {
+    // ถ้า login อยู่แล้ว → ไปหน้า home เลย
+    const { data: sessionRes } = await supabase.auth.getSession();
+    if (sessionRes?.session?.user) {
+      try { window.location.href = "home.html"; return; } catch {}
+    }
+
+    const btn = document.getElementById("btnSignIn");
+    const memberInput = document.getElementById("memberId");
+    const passwordInput = document.getElementById("password");
+
+    // error box
+    let errorEl = document.getElementById("loginError");
+    if (!errorEl && btn) {
+      errorEl = document.createElement("div");
+      errorEl.id = "loginError";
+      errorEl.style.cssText = "color:#b91c1c;margin-top:8px;font-size:14px;";
+      btn.insertAdjacentElement("afterend", errorEl);
+    }
+    const showError = (msg) => { if (errorEl) errorEl.textContent = msg || ""; };
+    const clearError = () => showError("");
+
+    // bind once
+    if (btn && !btn.dataset.bound) {
+      btn.dataset.bound = "1";
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        clearError();
+
+        const memberIdRaw = memberInput?.value?.trim() || "";
+        const rawPass = String(passwordInput?.value || "").trim();
+
+        if (!memberIdRaw || !rawPass) {
+          showError("กรุณากรอกเลขสมาชิก/อีเมล และรหัสผ่านให้ครบ");
+          return;
+        }
+
+        // กันกดรัว
+        if (btn.dataset.busy === "1") return;
+        setBusy(btn, true);
+
+        try {
+          const email = toEmail(memberIdRaw);
+          const memberCode = memberIdRaw.includes("@")
+            ? memberIdRaw.split("@")[0]
+            : memberIdRaw;
+
+          // เติม 55 เฉพาะ 0001-0030 ตอนเช็ค
+          const passForCheck = normalizePasswordForCheck(memberCode, rawPass);
+
+          // 1) เช็กรหัสผ่านด้วย RPC
+          const { data: ok, error: rpcErr } = await supabase.rpc("auth_test_password", {
+            email,
+            password: passForCheck
+          });
+
+          if (rpcErr) {
+            console.error("[RecGo] auth_test_password error:", rpcErr);
+            showError(getErrText(rpcErr));
+            return;
+          }
+          if (!ok) {
+            showError("อีเมล/เลขสมาชิก หรือรหัสผ่านไม่ถูกต้อง");
+            return;
+          }
+
+          // 2) บันทึกล็อกอิน + รับ display_name กลับมา
+          const { data: rec, error: recErr } = await supabase.rpc("record_login", {
+            p_member_code: memberCode,
+            p_ok: true,
+            p_email: email
+          });
+          if (recErr) {
+            console.warn("[RecGo] record_login error:", recErr);
+            showError("ไม่สามารถบันทึกการเข้าสู่ระบบได้");
+            return;
+          }
+
+          // 3) ดึง display_name
+          const { data: displayName, error: nameErr } = await supabase.rpc("get_displayname", {
+            p_member_code: memberCode
+          });
+          if (nameErr) console.error("get_displayname error:", nameErr);
+
+          localStorage.setItem("currentUser", JSON.stringify({
+            email,
+            member_code: memberCode,
+            display_name: displayName ?? memberCode,
+            lastLoginAt: rec?.created_at ?? new Date().toISOString()
+          }));
+
+          // 4) ไปหน้า home
+          window.location.href = "home.html";
+
+        } catch (err) {
+          console.error("[RecGo] sign-in exception:", err);
+          showError(getErrText(err));
+        } finally {
+          setBusy(btn, false);
+        }
+      });
+    }
+  });
+  document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("infoModal");
+    const openBtn = document.getElementById("fabInfo");
+    if (!modal || !openBtn) return;
+
+    const open = () => {
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+    };
+
+    const close = () => {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    };
+
+    // เปิด
+    openBtn.addEventListener("click", open);
+
+    // ปิด (คลิก backdrop / X / ปุ่ม "ปิด")
+    modal.addEventListener("click", (e) => {
+      if (e.target.closest("[data-close='1']")) close();
+    });
+
+    // ปิดด้วย Esc
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("open")) close();
+    });
+  });
+</script>
+
+</body>
+</html>

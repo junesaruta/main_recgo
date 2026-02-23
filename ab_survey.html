@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RecGo — A/B Feedback</title>
+  <style>
+    :root{
+      --bg:#f6f7f9;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#d1d5db;
+
+      --accent:#5ECCB2;
+      --btn:#5ECCB2;
+      --btn-dark:#3AA79A;
+
+      --radius:10px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 22px auto;
+      padding: 0 14px 28px;
+    }
+
+    .topbar{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+
+    .top-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .brand{ display:flex; align-items:center; gap:12px; font-weight:800; }
+    .brand .logo{ width:60px; height:auto; display:block; }
+
+    h1{
+      margin:0;
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+
+    .accent-line{
+      height:5px;
+      background: var(--accent);
+      border-radius: 999px;
+      margin-top: 12px;
+    }
+
+    .meta{
+      margin-top: 10px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .pill{
+      background:#fff;
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    .pill b{ color:var(--text); }
+
+    .card{
+      margin-top: 14px;
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 18px 18px;
+    }
+
+    .step-title{
+      font-weight:900;
+      margin: 2px 0 8px;
+      font-size: 16px;
+    }
+    .step-sub{
+      margin:0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.35;
+    }
+
+    .table-wrap{
+      width:100%;
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius: 10px;
+      background:#fff;
+    }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      min-width: 900px;
+      background:#fff;
+    }
+
+    thead th{
+      font-size: 13px;
+      color: var(--text);
+      font-weight:900;
+      padding: 14px 10px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align:bottom;
+      background:#fff;
+    }
+
+    thead th:first-child{
+      text-align:left;
+      min-width: 420px;
+    }
+
+    thead th.variant-col{
+      width: 70px;
+      text-align:center;
+      font-weight:900;
+    }
+
+    tbody td{
+      border-bottom: 1px solid #eef0f2;
+      padding: 12px 10px;
+      vertical-align: middle;
+    }
+
+    tbody tr:nth-child(4n+1),
+    tbody tr:nth-child(4n+2){
+      background:#fafafa;
+    }
+
+    .qtext{
+      font-size: 14px;
+      line-height:1.35;
+      font-weight:700;
+      color: var(--text);
+    }
+
+    .variant-tag{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width: 52px;
+      height: 30px;
+      border-radius: 999px;
+      font-weight:900;
+      background:#fff;
+    }
+
+    .center{ text-align:center; }
+
+    .rlabel{
+      display:inline-grid;
+      place-items:center;
+      width: 34px;
+      height: 34px;
+      margin: 0 auto;
+      cursor:pointer;
+      user-select:none;
+    }
+    .rlabel input{
+      position:absolute;
+      opacity:0;
+      pointer-events:none;
+    }
+    .dot{
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #111;
+      background:#fff;
+      display:block;
+    }
+    .rlabel input:checked + .dot{
+      border-color:#111;
+      background: radial-gradient(circle at center, #111 0 45%, transparent 46% 100%);
+    }
+
+    .footer{
+      display:grid;
+      gap:10px;
+      margin-top: 14px;
+      justify-items:center;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-weight:900;
+      font-size: 14px;
+    }
+    .btn.primary{
+      background: var(--btn);
+      color:#fff;
+      box-shadow: 0 8px 18px rgba(0,0,0,.10);
+    }
+    .btn.primary:hover{ background: var(--btn-dark); }
+    .btn.ghost{
+      background:#fff;
+      border:1px solid var(--line);
+      color:#111;
+    }
+    .btn.danger{
+      background:#fff;
+      border:1px solid rgba(239,68,68,.35);
+      color:#ef4444;
+    }
+
+    .progress-row{
+      width:min(520px, 100%);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .bar{
+      flex:1;
+      height: 10px;
+      background:#e5e7eb;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid #d1d5db;
+    }
+    .bar > span{
+      display:block;
+      height:100%;
+      width:0%;
+      background:#9ca3af;
+    }
+
+    .msg{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border:1px solid var(--line);
+      background:#fff;
+      color: var(--text);
+      display:none;
+      font-size: 13px;
+      line-height:1.35;
+    }
+    .msg.err{
+      border-color: rgba(239,68,68,.35);
+      background: rgba(239,68,68,.06);
+      color:#991b1b;
+    }
+    .msg.ok{
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.06);
+      color:#166534;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="top-row">
+        <div class="brand">
+          <img src="assets/group.svg" alt="RecGo" class="logo">
+        </div>
+        <h1>ความพึงพอใจในการใช้งาน</h1>
+      </div>
+
+      <div class="accent-line"></div>
+
+      <div class="meta">
+        <div class="pill">member_code: <b id="mc">—</b></div>
+        <div class="pill">session: <b id="sid">—</b></div>
+        <div class="pill">เวลา: <b id="today">—</b></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="step-title">โปรดให้คะแนนความพึงพอใจ (A และ B ในทุกข้อ)</div>
+      <p class="step-sub">
+        ให้คะแนน 1–5 ในแต่ละข้อสำหรับทั้ง <b>[A]</b> และ <b>[B]</b> แล้วกด “Submit” (ระบบจะบันทึกลง Database)
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th class="variant-col">A/B</th>
+              <th class="center">1</th>
+              <th class="center">2</th>
+              <th class="center">3</th>
+              <th class="center">4</th>
+              <th class="center">5</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="msg" class="msg"></div>
+
+      <div class="footer">
+        <div class="actions">
+          <button class="btn primary" id="submitBtn" type="button">Submit (A + B)</button>
+          <button class="btn ghost" id="backBtn" type="button">Back to Home</button>
+          <button class="btn danger" id="resetBtn" type="button">Reset</button>
+        </div>
+
+        <div class="progress-row">
+          <div>Progress</div>
+          <div class="bar"><span id="barFill"></span></div>
+          <div><b id="pct">0%</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+  import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./js/config.js";
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const QUESTIONS = [
+    "รายการตรงกับความสนใจของฉัน",
+    "พบสินค้าที่ไม่เคยรู้จักมาก่อน",
+    "มีความหลากหลายและไม่ซ้ำกันเกินไป",
+    "มีแนวโน้มจะกดดูรายละเอียด",
+    "ฉันพึงพอใจกับระบบแนะนำนี้"
+  ];
+
+  const $ = (id) => document.getElementById(id);
+
+  function todayStr(){
+    const d = new Date();
+    const pad = (n)=> String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  function mean(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+
+  function showMsg(type, text){
+    const el = $("msg");
+    el.className = "msg";
+    el.style.display = "block";
+    if(type === "err") el.classList.add("err");
+    if(type === "ok") el.classList.add("ok");
+    el.textContent = text;
+  }
+  function clearMsg(){
+    const el = $("msg");
+    el.style.display = "none";
+    el.textContent = "";
+    el.className = "msg";
+  }
+
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  const member_code = currentUser?.member_code ? String(currentUser.member_code) : "";
+  if(!member_code){
+    window.location.href = "login.html";
+  }
+
+  const session_id = crypto?.randomUUID ? crypto.randomUUID() : String(Date.now());
+  $("mc").textContent = member_code;
+  $("sid").textContent = session_id;
+  $("today").textContent = todayStr();
+
+  // 5 questions only
+  const state = { A: Array(QUESTIONS.length).fill(null), B: Array(QUESTIONS.length).fill(null) };
+
+  function answersComplete(arr){ return arr.every(x => x>=1 && x<=5); }
+
+  function updateProgress(){
+    const total = QUESTIONS.length * 2;
+    const done = state.A.filter(v=>v>=1&&v<=5).length + state.B.filter(v=>v>=1&&v<=5).length;
+    const pct = Math.round((done/total)*100);
+    $("pct").textContent = `${pct}%`;
+    $("barFill").style.width = `${pct}%`;
+  }
+
+  function renderTable(){
+    const tbody = $("tbody");
+    tbody.innerHTML = "";
+
+    QUESTIONS.forEach((q, i)=>{
+      const trA = document.createElement("tr");
+      const trB = document.createElement("tr");
+
+      trA.innerHTML = `
+        <td rowspan="2"><div class="qtext">Q${i+1} ${q}</div></td>
+        <td class="center"><span class="variant-tag">[A]</span></td>
+        ${[1,2,3,4,5].map(v => `
+          <td class="center">
+            <label class="rlabel" title="${v}">
+              <input type="radio" name="q${i}_A" value="${v}" ${state.A[i]===v ? "checked" : ""}/>
+              <span class="dot"></span>
+            </label>
+          </td>
+        `).join("")}
+      `;
+
+      trB.innerHTML = `
+        <td class="center"><span class="variant-tag">[B]</span></td>
+        ${[1,2,3,4,5].map(v => `
+          <td class="center">
+            <label class="rlabel" title="${v}">
+              <input type="radio" name="q${i}_B" value="${v}" ${state.B[i]===v ? "checked" : ""}/>
+              <span class="dot"></span>
+            </label>
+          </td>
+        `).join("")}
+      `;
+
+      tbody.appendChild(trA);
+      tbody.appendChild(trB);
+    });
+
+    updateProgress();
+  }
+
+  function bindRadios(){
+    $("tbody").addEventListener("change", (e)=>{
+      const input = e.target;
+      if(!(input instanceof HTMLInputElement)) return;
+      if(input.type !== "radio") return;
+
+      const m = input.name.match(/^q(\d+)_(A|B)$/);
+      if(!m) return;
+
+      const idx = Number(m[1]);
+      const variant = m[2];
+      const v = Number(input.value);
+
+      state[variant][idx] = v;
+      clearMsg();
+      updateProgress();
+    });
+  }
+
+  // indices for 5Q only
+  // - quality_idx: Q1-4
+  // - business_idx: Q5
+  // - others: null
+  function calcIndices5(answers){
+    const quality = mean(answers.slice(0,4));
+    const business = answers[4]; // single item
+    const overall = mean(answers);
+    return {
+      overall_mean: overall,
+      quality_idx: quality,
+      business_idx: business,
+      experience_idx: null,
+      satisfaction_idx: null
+    };
+  }
+
+  async function insertOneVariant(variant, answers5){
+    const idx = calcIndices5(answers5);
+
+    // keep table schema q1..q10: fill q6..q10 as null
+    const payload = {
+      member_code,
+      session_id,
+      variant,
+      q1: answers5[0], q2: answers5[1], q3: answers5[2], q4: answers5[3], q5: answers5[4],
+      ...idx
+    };
+
+    const { error } = await supabase.from("ab_reco_survey").insert(payload);
+    if(error) throw error;
+  }
+
+  $("submitBtn").addEventListener("click", async ()=>{
+    clearMsg();
+
+    if(!answersComplete(state.A)){
+      showMsg("err","กรุณาให้คะแนนฝั่ง [A] ให้ครบทุกข้อก่อนกด Submit");
+      return;
+    }
+    if(!answersComplete(state.B)){
+      showMsg("err","กรุณาให้คะแนนฝั่ง [B] ให้ครบทุกข้อก่อนกด Submit");
+      return;
+    }
+
+    try{
+      await insertOneVariant("A", state.A.map(Number));
+      await insertOneVariant("B", state.B.map(Number));
+      showMsg("ok","บันทึกลงระบบแล้ว ขอบคุณมาก!");
+    }catch(e){
+      console.error(e);
+      showMsg("err", `บันทึกไม่สำเร็จ: ${e?.message || e}`);
+    }
+  });
+
+  $("resetBtn").addEventListener("click", ()=>{
+    if(!confirm("ล้างคำตอบทั้งหมด (A และ B)?")) return;
+    state.A = Array(QUESTIONS.length).fill(null);
+    state.B = Array(QUESTIONS.length).fill(null);
+    renderTable();
+    showMsg("ok","ล้างคำตอบแล้ว ");
+  });
+
+  $("backBtn").addEventListener("click", ()=>{
+    window.location.href = "home3.html";
+  });
+
+  renderTable();
+  bindRadios();
+</script>
+</body>
+</html>

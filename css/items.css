@@ -1,0 +1,189 @@
+:root{
+  --pink:#FBB4C7;
+  --mint:#5ECCB2;
+  --text:#1E1E1E;
+  --outline-variant:#CAC4D0; /* fallback ของ var(--Schemes-Outline-Variant) */
+  --font-th:"Noto Sans Thai", Roboto, Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: var(--font-th);
+  color: var(--text);
+  background: #fff;
+}
+
+/* เวทีหลักตามสเปกที่ให้มา */
+.items-stage{
+  width:100%;
+  height:100%;
+  min-height: 100vh;   
+  position:relative;
+  background: var(--pink);
+  overflow:hidden;
+  border-radius:18px;
+  outline: 8px var(--outline-variant) solid;
+}
+
+/* ===== พื้นหลัง/พาเนล: คงเต็มหน้าจอ เหมือนเดิม ===== */
+.items-panel{
+  position:absolute;
+  top:150px;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#FFF3F9;
+  border-top-left-radius:74px;
+  border-top-right-radius:74px;
+  border-bottom-left-radius:0;
+  border-bottom-right-radius:0;
+}
+
+/* ===== รูปสินค้า: จัดกึ่งกลางและยืดหยุ่นตามขนาดจอ ===== */
+.item-img{
+  position:absolute;
+  top:250px;                     /* คง baseline เดิม */
+  left:50%;                      /* จัดกึ่งกลางแนวนอน */
+  transform:translateX(-50%);
+  width:min(40vw, 220px);        /* ย่อ/ขยายได้ */
+  aspect-ratio:1 / 1;            /* ให้เป็นสี่เหลี่ยมจัตุรัส */
+  background:#E3E3E3;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid #e5e7eb;
+}
+
+/* ===== ปุ่มพื้นฐาน: กำหนดให้มีความกว้างยืดหยุ่น และอยู่กลางจอ ===== */
+.btn{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(82vw, 320px);        /* ปรับตามจอ, สูงสุด ~320px */
+  height:41px;
+  border-radius:100px;
+  outline-offset:-1.5px;
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  font:500 16px/24px Roboto, sans-serif;
+  letter-spacing:0.15px;
+  cursor:pointer;
+  user-select:none;
+}
+
+/* ADD TO FAVORITE (บน/ซ้าย) */
+.btn-mint{
+  top:585px;                     /* baseline เดิมบนจอใหญ่ */
+  background:var(--mint);
+  color:#fff;
+  outline:3px var(--mint) solid;
+  border:none;
+}
+
+/* Back (ล่าง/ขวา) */
+.btn-outline{
+  top:636px;                     /* อยู่ต่ำกว่าปุ่มแรกเล็กน้อย */
+  background:transparent;
+  color:#090909;
+  outline:3px var(--mint) solid;
+  border:none;
+}
+
+
+/* Product Id ด้านบนขวา — responsive, ชิดริมหน้า */
+.product-id{
+  position: absolute;
+  top: 56px;
+  right: 24px;          /* ชิดขอบขวาแบบมีระยะหายใจ */
+  left: auto;
+  width: auto;          /* ไม่ฟิกซ์ความกว้าง */
+  max-width: calc(100% - 48px);  /* ป้องกันล้นจอ */
+  color: var(--text);
+  font: 600 24px/28.8px Inter, sans-serif;
+  font-size: 22px;
+  text-align: right;    /* จัดชิดขวา */
+  z-index: 3;           /* ลอยเหนือพาเนล */
+}
+
+
+/* ── ชื่อสินค้า: จัดกึ่งกลางและยืดหยุ่น ─────────────────────────── */
+.title-wrap{
+  position:absolute;
+  top:197px;
+  left:50%;
+  transform: translateX(-50%);
+  width: min(90%, 640px);      /* ย่อ/ขยายตามจอ */
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;          /* ชิดกลางแนวนอน */
+  gap:8px;
+}
+.item-title{
+  width:100%;
+  color: var(--text);
+  font:400 32px/38.4px Inter, sans-serif;
+  word-wrap:break-word;
+  text-align:center;           /* ตัวอักษรกึ่งกลาง */
+}
+
+/* ── ป้ายราคา: จัดกลางแบบคู่ (ซ้าย=label ขวา=value) ─────────────── */
+.price-label,
+.price-value{
+  position:absolute;
+  top:500px;                   /* ระดับแนวเดียวกัน */
+  width:auto;
+  color: var(--text);
+  font:600 24px/28.8px Inter, sans-serif;
+  white-space:nowrap;
+  left:50%;                    /* อิงกึ่งกลางจอ */
+}
+
+/* label อยู่ซ้ายของจุดกึ่งกลาง (ถอยเท่าความกว้างตัวเอง + ช่องไฟ) */
+.price-label{
+  transform: translateX(calc(-100% - 8px));
+  text-align:right;
+}
+
+/* value อยู่ขวาของจุดกึ่งกลาง (ขยับออก 8px) */
+.price-value{
+  transform: translateX(8px);
+  text-align:left;
+}
+
+/* ===== จอใหญ่: วาง 2 ปุ่มแบบ "เรียงข้างกัน" รอบจุดกึ่งกลาง ===== */
+@media (min-width: 900px){
+  .btn{ width:282px; }           /* ใช้ความกว้างเดิมบนเดสก์ท็อป */
+  .btn-mint{
+    top:585px;
+    left:calc(50% - 282px - 12px);   /* เลื่อนไปทางซ้ายของจุดกึ่งกลาง */
+    transform:none;
+  }
+  .btn-outline{
+    top:585px;
+    left:calc(50% + 12px);           /* อยู่ขวาของจุดกึ่งกลาง */
+    transform:none;
+  }
+}
+
+/* ── จอเล็ก: ซ้อนบรรทัดและยังคงกึ่งกลาง ─────────────────────── */
+@media (max-width: 720px){
+  /* .item-img{ top: 200px; }       ขยับรูปขึ้นเล็กน้อย */
+  .btn-mint{ top: 600px; }       /* เรียงแนวตั้งกึ่งกลาง */
+  .btn-outline{ top: 652px; }
+  .item-title{ font-size: 26px; line-height: 1.35; }
+
+  .price-label,
+  .price-value{
+    font-size: 22px; line-height: 1.35;
+    transform: translateX(-50%);
+  }
+  .price-label{ top: 470px; }   /* ขยับขึ้นเล็กน้อย */
+  .product-id{
+    top: 20px;
+    right: 16px;
+    font: 600 18px/1.4 Inter, sans-serif;
+  }
+}

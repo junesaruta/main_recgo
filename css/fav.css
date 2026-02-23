@@ -1,0 +1,140 @@
+/* โครงพื้นฐานแนะนำให้มี */
+*{ box-sizing:border-box; }
+body {
+  background: #FBB4C7;
+  margin: 0;
+  font-family: "Noto Sans Thai", system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.fav-container {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;              /* กินเต็มสูงสุด */
+  margin: 0 auto;                 /* เอา margin ล่าง/บนออก */
+  background: #FFF3F9;
+  border-top-left-radius: 74px;
+  border-top-right-radius: 74px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  position: relative;
+  padding: 20px 40px 80px;        /* เผื่อที่ให้ปุ่ม back ไม่ทับ */
+}
+
+h1 {
+  font-size: 42px;
+  font-weight: 700;
+  margin: 0 0 24px;
+  color: #1E1E1E;
+  display: flex;
+  justify-content: center; /* ดันทั้ง element ให้อยู่กลาง */
+}
+.fav-title {
+  font-size: 42px;
+  font-weight: 700;
+  font-family: "Noto Sans Thai", system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  margin: 40px 0 24px;   /* เพิ่ม margin-top จาก 0 → 40px */
+  color: #1E1E1E;
+  text-align: center;
+}
+
+/* ลิสต์ */
+.fav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fav-list li {
+  display: grid;
+  grid-template-columns: 50px 1fr 120px 40px; /* # | ชื่อ | ราคา | ลบ */
+  align-items: center;
+  gap: 8px 12px;
+  font-size: 20px;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+/* คอลัมน์ */
+.fav-idx {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1E1E1E;
+  text-align: center;
+}
+.fav-name {
+  color: #1E1E1E;
+  word-break: break-word;       /* กันชื่อยาวดันเลย์เอาต์ */
+}
+.fav-price {
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;          /* กันราคาแตกบรรทัด */
+}
+
+/* ปุ่มลบ */
+.remove-btn {
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  border: 0; background: transparent; cursor: pointer;
+  border-radius: 8px;
+}
+.remove-btn:hover { background: rgba(0,0,0,.06); }
+.remove-btn:focus-visible {
+  outline: 2px solid #5ECCB2;
+  outline-offset: 2px;
+}
+.remove-btn img { width: 24px; height: 24px; pointer-events: none; }
+
+/* ปุ่ม Back */
+.back-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  width: 15%;
+  transform: translateX(-50%);
+  padding: 10px 32px;
+  border-radius: 50px;
+  border: 2px solid #5ECCB2;
+  background: #FFF3F9;
+  font-weight: 700;
+  cursor: pointer;
+}
+.back-btn:hover {
+  filter: brightness(1.05);
+}
+.back-btn:active {
+  transform: translateX(-50%) translateY(1px);
+}
+.back-btn:focus-visible {
+  outline: 2px solid #3AA79A;
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fav-list li {
+    grid-template-columns: 40px 1fr 80px 32px;
+    font-size: 18px;
+  }
+  .fav-price { font-size: 18px; }
+}
+
+@media (max-width: 480px) {
+  .fav-list li {
+    grid-template-columns: 36px 1fr 40px;
+    grid-template-areas:
+      "idx name remove"
+      "idx price remove";
+    font-size: 16px;
+    gap: 6px;
+  }
+  .fav-idx   { grid-area: idx; font-size: 18px; }
+  .fav-name  { grid-area: name; }
+  .fav-price { grid-area: price; text-align: left; }
+  .remove-btn { grid-area: remove; justify-self: end; }
+}
+
+/* สถานะว่าง */
+.empty {
+  color: #666; text-align: center; padding: 16px 0;
+}

@@ -1,0 +1,130 @@
+#splash {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, #F87B9C 0%, white 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 9999;
+  animation: fadeOut 1s ease forwards;
+  animation-delay: 2.5s; /* 2.5 วิ แล้วค่อยจางหาย */
+}
+
+#splash img {
+  width: 300px;
+  height: auto;
+  animation: popIn 1s ease;
+}
+
+#splash h1 {
+  margin-top: 20px;
+  font-family: "Inter", "Noto Sans Thai", sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1E1E1E;
+  animation: fadeIn 1.5s ease;
+}
+
+/* --- Animations --- */
+@keyframes popIn {
+  0%   { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes fadeIn {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+/* ===== ดอกไม้ซ้าย-ขวา ===== */
+#splash .flower {
+  position: absolute;
+  width: 480px;  /* ✅ ปรับใหญ่ขึ้น (จาก 320px → 480px) */
+  height: auto;
+  z-index: 1;
+}
+
+#splash .flower.f1 {
+  left: -200px;
+  bottom: 40px;
+}
+
+#splash .flower.f2 {
+  right: -200px;
+  top: 40px;
+}
+
+/* ===== เนื้อหาตรงกลาง ===== */
+.splash-content {
+  position: relative;
+  z-index: 2; /* ให้อยู่เหนือดอกไม้ */
+  text-align: center;
+}
+
+.splash-content .logo {
+  width: 160px;
+  height: auto;
+  /*  เอาเงาออก */
+  animation: popIn 1s ease;
+}
+
+.splash-title .coop-inline {
+  height: 1em;    
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-left: 4px; /* ระยะห่างจากข้อความ */
+}
+
+
+/* ถ้าจอแคบ ให้ยอมขึ้นบรรทัดใหม่ */
+@media (max-width: 360px){
+  .splash-title{ white-space:normal; flex-wrap:wrap; }
+}
+
+.splash-note {
+  position: relative;
+  bottom: -20px;
+  left: 20px;
+  text-align: center;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 4px 6px;   /* กันชิดเกินไปจนอ่านอึดอัด */
+  font-family: "Inter","Noto Sans Thai",sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(30,30,30,.7);
+}
+
+.splash-note .coop-note {
+  max-width: 100px;     /* เล็กกว่าฟอนต์เล็กน้อย */
+  max-height: 100px;     /* เล็กกว่าฟอนต์เล็กน้อย */
+  aspect-ratio: 1/1;
+  object-fit: contain;
+  opacity: .85;
+}
+
+ /* อักษร Gradient 2 สีธรรมดา */
+.splash-title.fresh-gradient {
+  font-family: "Inter","Noto Sans Thai", sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.5vw, 28px);
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+
+ 
+  background: linear-gradient(90deg, #F87B9C 0%, #5ECCB2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -text-fill-color: transparent;
+}
