@@ -20,7 +20,7 @@
 
   // ถ้าไม่มีข้อมูล → กลับหน้า home
   if (!data || !data.item_id) {
-    window.location.href = "home2.html";
+    window.location.href = "home.html";
     return;
   }
 
@@ -37,7 +37,7 @@
 
   // ----- Back Button -----
   document.getElementById("btnBack").addEventListener("click", () => {
-    window.location.href = "home2.html";
+    window.location.href = "home.html";
   });
 
   // ----- Add to Favorite -----
